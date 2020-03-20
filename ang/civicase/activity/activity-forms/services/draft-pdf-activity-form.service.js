@@ -34,7 +34,7 @@
       return getCrmUrl('civicrm/activity/pdf/' + options.action, {
         action: options.action,
         caseid: activity.case_id,
-        cid: assigneeContactId,
+        cid: activity.assignee_contact_id,
         context: 'standalone',
         draft_id: activity.id,
         id: activity.id,

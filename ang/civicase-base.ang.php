@@ -16,6 +16,11 @@ use CRM_Civicase_Helper_NewCaseWebform as NewCaseWebform;
 $caseCategoryName = CRM_Utils_Request::retrieve('case_type_category', 'String');
 $caseCategorySetting = new CRM_Civicase_Service_CaseCategorySetting();
 
+$container = (new CRM_Extension_System())->getFullContainer();
+$modulePath = $container
+  ->getResUrl('uk.co.compucorp.usermenu');
+var_export($modulePath); exit;
+
 $options = [
   'activityTypes' => 'activity_type',
   'activityStatuses' => 'activity_status',
