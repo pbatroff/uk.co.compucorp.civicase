@@ -57,13 +57,15 @@
       .value();
 
     (function init () {
-      getCaseTypes();
       // We hide the breakdown when there's only one case type
       if ($scope.caseTypesLength < 2) {
         $scope.showBreakdown = false;
       }
 
-      $scope.$watch('caseFilter', caseFilterWatcher, true);
+      $scope.$watch('caseFilter', _.debounce(caseFilterWatcher, 1000, {
+        leading: false,
+        trailing: true
+      }), true);
       loadHiddenCaseStatuses();
     }());
 
@@ -119,6 +121,8 @@
 
     /**
      * Loads Stats data
+     *
+     * @returns {Promise} resolves after loading the case type stats.
      */
     function loadStatsData () {
       var apiCalls = [];
@@ -129,7 +133,8 @@
       delete params.status_id;
 
       apiCalls.push(['Case', 'getstats', params]);
-      crmApi(apiCalls).then(function (response) {
+
+      return crmApi(apiCalls).then(function (response) {
         $scope.summaryData = response[0].values;
       });
     }
