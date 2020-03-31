@@ -22,7 +22,7 @@
      * @param {object} attributes the element attributes
      */
     function civicaseCaseActionsLink ($scope, element, attributes) {
-      var CASE_ACTIONS = CaseActions.getAll();
+      var CASE_ACTIONS = CaseActions.getAllForCurrentCaseCategory();
       var ts = CRM.ts('civicase');
       var isBulkMode = attributes.isBulkMode;
 

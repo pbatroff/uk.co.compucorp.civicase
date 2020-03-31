@@ -48,7 +48,7 @@ $requires = [
 ];
 $requires = CRM_Civicase_Hook_addDependentAngularModules::invoke($requires);
 
-set_case_actions($options, $caseCategoryPermissions);
+set_case_actions($options, $caseCategoryName, $caseCategoryPermissions);
 set_contact_tasks($options);
 
 /**
@@ -92,12 +92,40 @@ function get_js_files() {
 }
 
 /**
+ * Appends the case actions for the given case category.
+ *
+ * It also takes into consideration the given permissions.
+ *
+ * @param array $options
+ *   The settings container where the case actions will be stored.
+ * @param string $caseCategoryName
+ *   The name of the category to add case actions for.
+ * @param array $caseCategoryPermissions
+ *   List of permissions related to the case category.
+ */
+function set_case_actions(array &$options, $caseCategoryName, array $caseCategoryPermissions) {
+  $caseActions = array_merge(
+    get_default_case_actions($caseCategoryPermissions),
+    get_webforms_case_action()
+  );
+
+  $options['caseActions'] = [];
+  $options['caseActions'][$caseCategoryName] = $caseActions;
+}
+
+/**
  * Bulk actions for case list.
  *
  * We put this here so it can be modified by other extensions.
+ *
+ * @param array $caseCategoryPermissions
+ *   List of permissions related to the case category.
+ *
+ * @return array
+ *   A list of case actions.
  */
-function set_case_actions(&$options, $caseCategoryPermissions) {
-  $options['caseActions'] = [
+function get_default_case_actions(array $caseCategoryPermissions) {
+  $caseActions = [
     [
       'title' => ts('Change Case Status'),
       'action' => 'ChangeStatus',
@@ -143,35 +171,41 @@ function set_case_actions(&$options, $caseCategoryPermissions) {
       'icon' => 'fa-link',
     ],
   ];
+
   if (CRM_Core_Permission::check('administer CiviCase')) {
-    $options['caseActions'][] = [
+    $caseActions[] = [
       'title' => ts('Merge 2 Cases'),
       'number' => 2,
       'action' => 'MergeCases',
       'icon' => 'fa-compress',
     ];
-    $options['caseActions'][] = [
+    $caseActions[] = [
       'title' => ts('Lock Case'),
       'action' => 'LockCases',
       'number' => 1,
       'icon' => 'fa-lock',
     ];
   }
+
   if (CRM_Core_Permission::check($caseCategoryPermissions['DELETE_IN_CASE_CATEGORY']['name'])) {
-    $options['caseActions'][] = [
+    $caseActions[] = [
       'title' => ts('Delete Case'),
       'action' => 'DeleteCases',
       'icon' => 'fa-trash',
     ];
   }
 
-  add_webforms_case_action($options);
+  return $caseActions;
 }
 
 /**
  * Add webforms with cases attached to menu.
+ *
+ * @return array
+ *   A list of webform case actions.
  */
-function add_webforms_case_action(&$options) {
+function get_webforms_case_action() {
+  $webformCaseActions = [];
   $items = [];
 
   $webformsToDisplay = Civi::settings()->get('civi_drupal_webforms');
@@ -197,7 +231,7 @@ function add_webforms_case_action(&$options) {
           'icon' => 'fa-link',
         ];
       }
-      $options['caseActions'][] = [
+      $webformCaseActions[] = [
         'title' => ts('Webforms'),
         'action' => 'Webforms',
         'icon' => 'fa-file-text-o',
@@ -205,6 +239,8 @@ function add_webforms_case_action(&$options) {
       ];
     }
   }
+
+  return $webformCaseActions;
 }
 
 /**

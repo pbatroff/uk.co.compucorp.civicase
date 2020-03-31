@@ -4,20 +4,24 @@
   module.service('CaseActions', CaseActions);
 
   /**
-   * Case Actions Service
+   * Case Actions Service.
+   *
+   * @param {string} currentCaseCategory the current case category.
    */
-  function CaseActions () {
-    var allCaseActions = _.cloneDeep(CivicaseSettings.caseActions);
+  function CaseActions (currentCaseCategory) {
+    var defaultCaseActions = CivicaseSettings.caseActions[''];
+    var caseCategoryActions = CivicaseSettings.caseActions[currentCaseCategory];
 
-    this.getAll = getAll;
+    this.getAllForCurrentCaseCategory = getAllForCurrentCaseCategory;
 
     /**
-     * Get all Case actions
+     * Get all Case actions for the current case category. If no actions are defined for
+     * the current case category, the default ones are returned instead.
      *
-     * @returns {object[]} all case actions
+     * @returns {object[]} a list of case actions.
      */
-    function getAll () {
-      return allCaseActions;
+    function getAllForCurrentCaseCategory () {
+      return caseCategoryActions || defaultCaseActions;
     }
   }
 })(angular, CRM.$, CRM._, CRM.civicase);
