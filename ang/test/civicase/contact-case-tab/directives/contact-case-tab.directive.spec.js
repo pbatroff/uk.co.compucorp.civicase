@@ -2,12 +2,14 @@
 
 ((_) => {
   describe('Contact Case Tab', () => {
+    const CURRENT_CASE_CATEGORY = 2;
     var $controller, $rootScope, $scope, CaseTypeCategoryTranslationService,
       crmApi, mockContactId, mockContactService;
 
-    beforeEach(module('civicase.data', 'civicase', ($provide) => {
+    beforeEach(module('civicase.data', 'civicase', 'civicase-base', ($provide, currentCaseCategoryProvider) => {
       mockContactService = jasmine.createSpyObj('Contact', ['getCurrentContactID']);
 
+      currentCaseCategoryProvider.set(CURRENT_CASE_CATEGORY);
       $provide.value('Contact', mockContactService);
     }));
 
@@ -36,12 +38,12 @@
 
       it('stores the current case type category translation', () => {
         expect(CaseTypeCategoryTranslationService.storeTranslation)
-          .toHaveBeenCalledWith($scope.caseTypeCategory);
+          .toHaveBeenCalledWith(CURRENT_CASE_CATEGORY);
       });
 
       it('stores the case type category name', () => {
         expect($scope.caseTypeCategoryName)
-          .toBe(CRM['civicase-base'].caseTypeCategories[$scope.caseTypeCategory].name);
+          .toBe(CRM['civicase-base'].caseTypeCategories[CURRENT_CASE_CATEGORY].name);
       });
     });
 
@@ -89,13 +91,13 @@
       describe('when changing back to the current case type category tab', () => {
         beforeEach(() => {
           $scope.handleContactTabChange({
-            case_type_category: $scope.caseTypeCategory
+            case_type_category: CURRENT_CASE_CATEGORY
           });
         });
 
         it('restores the translations for the current case type category', () => {
           expect(CaseTypeCategoryTranslationService.restoreTranslation)
-            .toHaveBeenCalledWith($scope.caseTypeCategory);
+            .toHaveBeenCalledWith(CURRENT_CASE_CATEGORY);
         });
       });
 
@@ -118,7 +120,6 @@
      */
     function initController () {
       $scope = $rootScope.$new();
-      $scope.caseTypeCategory = 2;
       $controller('CivicaseContactCaseTabController', { $scope: $scope });
     }
   });

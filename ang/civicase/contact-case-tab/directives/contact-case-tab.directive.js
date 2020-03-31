@@ -5,10 +5,7 @@
     return {
       restrict: 'EA',
       controller: 'CivicaseContactCaseTabController',
-      templateUrl: '~/civicase/contact-case-tab/directives/contact-case-tab.directive.html',
-      scope: {
-        caseTypeCategory: '='
-      }
+      templateUrl: '~/civicase/contact-case-tab/directives/contact-case-tab.directive.html'
     };
   });
 
@@ -24,10 +21,11 @@
    * @param {object} Contact the contact service
    * @param {object} ContactsCache the contacts cache service
    * @param {string} CaseCategoryWebformSettings service to fetch case category webform settings
+   * @param {string} currentCaseCategory the current case category
    */
   function CivicaseContactCaseTabController ($scope, ts, CaseTypeCategory,
     CaseTypeCategoryTranslationService, crmApi, formatCase, Contact,
-    ContactsCache, CaseCategoryWebformSettings) {
+    ContactsCache, CaseCategoryWebformSettings, currentCaseCategory) {
     var commonConfigs = {
       isLoaded: false,
       showSpinner: false,
@@ -39,7 +37,7 @@
     };
 
     $scope.caseDetailsLoaded = false;
-    $scope.caseTypeCategoryName = CaseTypeCategory.getAll()[$scope.caseTypeCategory].name;
+    $scope.caseTypeCategoryName = CaseTypeCategory.getAll()[currentCaseCategory].name;
     $scope.contactId = Contact.getCurrentContactID();
     $scope.webformSettings = CaseCategoryWebformSettings.getSettingsFor($scope.caseTypeCategoryName);
     $scope.casesListConfig = [
@@ -48,7 +46,7 @@
         title: ts('Open Cases'),
         filterParams: {
           'status_id.grouping': 'Opened',
-          'case_type_id.case_type_category': $scope.caseTypeCategory,
+          'case_type_id.case_type_category': currentCaseCategory,
           contact_id: $scope.contactId,
           is_deleted: 0
         },
@@ -58,7 +56,7 @@
         title: ts('Resolved cases'),
         filterParams: {
           'status_id.grouping': 'Closed',
-          'case_type_id.case_type_category': $scope.caseTypeCategory,
+          'case_type_id.case_type_category': currentCaseCategory,
           contact_id: $scope.contactId,
           is_deleted: 0
         },
@@ -68,7 +66,7 @@
         title: ts('Other cases for this contact'),
         filterParams: {
           case_manager: $scope.contactId,
-          'case_type_id.case_type_category': $scope.caseTypeCategory,
+          'case_type_id.case_type_category': currentCaseCategory,
           is_deleted: 0
         },
         showContactRole: true
@@ -84,7 +82,7 @@
       initSubscribers();
       getCases();
       CaseTypeCategoryTranslationService
-        .storeTranslation($scope.caseTypeCategory);
+        .storeTranslation(currentCaseCategory);
     }());
 
     /**
@@ -247,7 +245,7 @@
      */
     function handleContactTabChange (urlParams) {
       var caseTypeCategoryId = parseInt(urlParams.case_type_category, 10);
-      var isChangingToCurrentCaseCategoryTab = caseTypeCategoryId === $scope.caseTypeCategory;
+      var isChangingToCurrentCaseCategoryTab = caseTypeCategoryId === currentCaseCategory;
 
       if (!isChangingToCurrentCaseCategoryTab) {
         return;

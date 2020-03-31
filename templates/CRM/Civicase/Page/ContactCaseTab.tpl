@@ -5,10 +5,13 @@
   <script type="text/javascript">
     (function(angular, $, _) {
       angular.module('civicaseContactTab', ['civicase']);
-      angular.module('civicaseContactTab').config(function($routeProvider) {
+      angular.module('civicaseContactTab').config(function($routeProvider, currentCaseCategoryProvider) {
+        var caseTypeCategoryId = '{/literal}{$case_type_category}{literal}';
+
+        currentCaseCategoryProvider.set(caseTypeCategoryId);
         $routeProvider.when('/', {
           reloadOnSearch: false,
-          template: '<civicase-contact-case-tab case-type-category="{/literal}{$case_type_category}{literal}"></civicase-contact-case-tab>'
+          template: '<civicase-contact-case-tab></civicase-contact-case-tab>'
         });
       });
     })(angular, CRM.$, CRM._);
