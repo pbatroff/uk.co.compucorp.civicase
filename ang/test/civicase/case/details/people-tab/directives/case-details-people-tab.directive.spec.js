@@ -260,6 +260,23 @@ describe('Case Details People Tab', () => {
       it('closes the contact selection dialog', () => {
         expect(crmConfirmYesEvent.preventDefault).not.toHaveBeenCalled();
       });
+
+      describe('after the case has been refreshed', () => {
+        beforeEach(() => {
+          $scope.item.contacts.push({
+            ...contact,
+            role: ts('Client')
+          });
+          $rootScope.$digest();
+        });
+
+        it('adds the client to the list of roles', () => {
+          expect($scope.roles).toContain(jasmine.objectContaining({
+            contact_id: contact.contact_id,
+            role: ts('Client')
+          }));
+        });
+      });
     });
 
     describe('when replacing the case client', () => {

@@ -636,7 +636,16 @@ included in the confirmation dialog.
             $.extend(role, { checked: selected.indexOf(contact.contact_id) >= 0 }, contact);
           }
         } else if (!$scope.rolesFilter || $scope.rolesFilter === 'client') {
-          caseRoles.push($.extend({ role: ts('Client'), checked: selected.indexOf(contact.contact_id) >= 0 }, contact));
+          var hasCaseClient = selected.indexOf(contact.contact_id) >= 0;
+
+          caseRoles.push($.extend(
+            {},
+            contact,
+            {
+              role: ts('Client'),
+              checked: hasCaseClient
+            }
+          ));
         }
       });
 
