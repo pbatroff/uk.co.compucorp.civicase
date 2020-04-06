@@ -37,7 +37,7 @@
    *    }
    *  },
    *  description: string,
-   *  event: document#event
+   *  event: document#event,
    *  role: Role,
    *  showContactSelectionError: (message: string) => void
    * }} ContactPromptResult
