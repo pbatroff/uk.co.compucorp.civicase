@@ -32,7 +32,8 @@ class CRM_Civicase_Helper_CaseCategory {
 
         return $caseTypeCategories[$caseCategoryId];
       }
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       return NULL;
     }
 
@@ -117,7 +118,8 @@ class CRM_Civicase_Helper_CaseCategory {
         'name' => $optionName,
       ]);
 
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       if (!$caseTypeCategoryName || strtolower($caseTypeCategoryName) == 'cases') {
         return [];
       }
@@ -246,7 +248,7 @@ class CRM_Civicase_Helper_CaseCategory {
         'url' => CRM_Utils_System::url('civicrm', 'reset=1'),
       ],
       [
-        'title' => ts('Case Dashboard'),
+        'title' => ts('Manage Cases'),
         'url' => CRM_Utils_System::url('civicrm/case/a/', ['case_type_category' => $caseCategoryName], TRUE,
           "/case?case_type_category={$caseCategoryName}"),
       ],
