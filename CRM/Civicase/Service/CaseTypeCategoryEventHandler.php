@@ -3,6 +3,7 @@
 use CRM_Civicase_Service_CaseCategoryMenu as CaseCategoryMenu;
 use CRM_Civicase_Service_CaseCategoryCustomDataType as CaseCategoryCustomDataType;
 use CRM_Civicase_Service_CaseCategoryCustomFieldExtends as CaseCategoryCustomFieldExtends;
+use CRM_Civicase_Helper_CaseCategory as CaseCategoryHelper;
 
 /**
  * Class CRM_Civicase_Service_CaseTypeCategoryEventHandler.
@@ -58,12 +59,8 @@ class CRM_Civicase_Service_CaseTypeCategoryEventHandler {
     }
 
     try {
-      $category = civicrm_api3('OptionValue', 'getsingle', [
-        'option_group_id' => 'case_type_categories',
-        'name' => $caseCategoryName,
-      ]);
-
-      $this->menu->createItems($caseCategoryName, $category['id']);
+      $categoryId = CaseCategoryHelper::getCategoryByName($caseCategoryName, 'id');
+      $this->menu->createItems($caseCategoryName, $categoryId);
       $this->customFieldExtends->create($caseCategoryName, "Case ({$caseCategoryName})");
       $this->customData->create($caseCategoryName);
     }

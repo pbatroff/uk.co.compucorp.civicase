@@ -33,7 +33,6 @@ class CRM_Civicase_Helper_CaseCategory {
         return $caseTypeCategories[$caseCategoryId];
       }
     } catch (Exception $e) {
-      return NULL;
     }
 
     return NULL;
@@ -235,6 +234,7 @@ class CRM_Civicase_Helper_CaseCategory {
    *   Case category name.
    */
   public static function updateBreadcrumbs($caseCategoryName) {
+    $caseCategoryId = CaseCategoryHelper::getCategoryByName($caseCategoryName, 'id');
     CRM_Utils_System::resetBreadCrumb();
     $breadcrumb = [
       [
@@ -247,12 +247,63 @@ class CRM_Civicase_Helper_CaseCategory {
       ],
       [
         'title' => ts('Case Dashboard'),
-        'url' => CRM_Utils_System::url('civicrm/case/a/', ['case_type_category' => $caseCategoryName], TRUE,
-          "/case?case_type_category={$caseCategoryName}"),
+        'url' => CRM_Utils_System::url('civicrm/case/a/', ['ctc' => $caseCategoryId], TRUE,
+          "/case?ctc={$caseCategoryId}"),
       ],
     ];
 
     CRM_Utils_System::appendBreadCrumb($breadcrumb);
+  }
+
+  /**
+   * Gets Case Type categories by params.
+   *
+   * @param array $params
+   *   The Case Type category params.
+   *
+   * @return array
+   *   Case Type categories matching params.
+   */
+  public static function getCategoriesByParams(array $params) {
+    $apiParams = ['sequential' => 1, 'option_group_id' => 'case_type_categories'];
+    $apiParams = array_merge($apiParams, $params);
+    $categories = civicrm_api3('OptionValue', 'get', $apiParams);
+
+    return $categories['is_error'] || empty($categories['values']) ? [] : $categories['values'];
+  }
+
+  /**
+   * Gets the Case Type category by params.
+   *
+   * @param array $params
+   *   The Case Type category params.
+   * @param string $property
+   *   (Optional) Case Type category property. If set then this category
+   *   property would be returned, full category data array otherwise.
+   *
+   * @return mixed
+   *   The Case Type category array, or it's property value.
+   */
+  public static function getCategoryByParams(array $params, $property = '') {
+    $category = self::getCategoriesByParams($params);
+    $category = !empty($category[0]) ? $category[0] : [];
+    return !empty($category) ? ($property ? $category[$property] : $category) : NULL;
+  }
+
+  /**
+   * Gets the case category by it's name.
+   *
+   * @param string $categoryName
+   *   The Case Type category name.
+   * @param string $property
+   *   (Optional) Case Type category property. If set then category property
+   *   would be returned, full category data array otherwise.
+   *
+   * @return mixed
+   *   The Case Type category id.
+   */
+  public static function getCategoryByName($categoryName, $property = '') {
+    return self::getCategoryByParams(['name' => $categoryName], $property);
   }
 
 }

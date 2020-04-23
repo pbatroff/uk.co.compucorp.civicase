@@ -2,6 +2,7 @@
 
 use CRM_Civicase_Service_CaseCategorySetting as CaseCategorySetting;
 use CRM_Civicase_Hook_Helper_CaseTypeCategory as CaseTypeCategoryHelper;
+use CRM_Civicase_Helper_CaseCategory as CaseCategoryHelper;
 
 /**
  * Class CRM_Civicase_Hook_Navigation_AlterForCaseMenu.
@@ -38,10 +39,12 @@ class CRM_Civicase_Hook_NavigationMenu_AlterForCaseMenu {
    *   Menu Array.
    */
   private function rewriteCaseUrls(array &$menu) {
+    $categoryId = CaseCategoryHelper::getCategoryByName('cases', 'id');
+
     // Array(string $oldUrl => string $newUrl).
     $rewriteMap = [
-      'civicrm/case?reset=1' => 'civicrm/case/a/#/case?case_type_category=cases',
-      'civicrm/case/search?reset=1' => 'civicrm/case/a/#/case/list?sx=1',
+      'civicrm/case?reset=1' => 'civicrm/case/a/?p=dd#/case?ctc=' . $categoryId,
+      'civicrm/case/search?reset=1' => 'civicrm/case/a/?p=fn#/case/list?sx=1',
     ];
 
     $addCaseUrl = 'civicrm/case/add';
@@ -119,7 +122,7 @@ class CRM_Civicase_Hook_NavigationMenu_AlterForCaseMenu {
     $urlParams = parse_url(htmlspecialchars_decode($url), PHP_URL_QUERY);
     parse_str($urlParams, $urlParams);
 
-    return !empty($urlParams['case_type_category']) ? $urlParams['case_type_category'] : 'Cases';
+    return !empty($urlParams['ctc']) ? $urlParams['ctc'] : 'Cases';
   }
 
   /**

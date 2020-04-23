@@ -31,7 +31,7 @@ class CRM_Civicase_Hook_PageRun_ViewCasePageRedirect {
    */
   private function redirectViewCasePage($caseId) {
     // OLD: http://localhost/civicrm/contact/view/case?reset=1&action=view&cid=129&id=51
-    // NEW: http://localhost/civicrm/case/a/?case_type_category=case_category_name#/case/list?
+    // NEW: http://localhost/civicrm/case/a/?ctc=case_category_name#/case/list?
     // sf=contact_id.sort_name&sd=ASC&focus=0&cf=%7B%7D&caseId=51&tab=summary&sx=0
     $case = civicrm_api3('Case', 'getsingle', [
       'id' => $caseId,
@@ -45,9 +45,10 @@ class CRM_Civicase_Hook_PageRun_ViewCasePageRedirect {
     // Add selected parameters passed to this page to the redirect URL.
     $relevantUrlParams = [['name' => 'tab', 'type' => 'String']];
     $caseCategoryName = CaseCategoryHelper::getCaseCategoryNameFromOptionValue($case['case_type_id.case_type_category']);
-    $fragment = "/case/list?sf=id&sd=DESC&caseId={$caseId}&cf=%7B%22case_type_category%22:%22" . strtolower($caseCategoryName) . "%22,%22status_id%22:%5B%22{$case['status_id']}%22%5D,%22case_type_id%22:%5B%22{$case['case_type_id.name']}%22%5D%7D";
+    $caseCategoryId = CaseCategoryHelper::getCategoryByName($caseCategoryName, 'id');
+    $fragment = "/case/list?sf=id&sd=DESC&caseId={$caseId}&cf=%7B%22ctc%22:%22" . strtolower($caseCategoryId) . "%22,%22status_id%22:%5B%22{$case['status_id']}%22%5D,%22case_type_id%22:%5B%22{$case['case_type_id.name']}%22%5D%7D";
     $this->addRelevantUrlParamsToFragment($fragment, $relevantUrlParams);
-    $url = CRM_Utils_System::url('civicrm/case/a/', ['case_type_category' => strtolower($caseCategoryName)], TRUE, $fragment, FALSE);
+    $url = CRM_Utils_System::url('civicrm/case/a/', ['ctc' => strtolower($caseCategoryId)], TRUE, $fragment, FALSE);
 
     CRM_Utils_System::redirect($url);
   }

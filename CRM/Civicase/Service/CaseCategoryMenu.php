@@ -1,6 +1,7 @@
 <?php
 
 use CRM_Civicase_Service_CaseCategoryPermission as CaseCategoryPermission;
+use CRM_Civicase_Helper_CaseCategory as CaseCategoryHelper;
 
 /**
  * Create/Delete Case Type Category Menu items.
@@ -183,17 +184,16 @@ class CRM_Civicase_Service_CaseCategoryMenu {
    * Gets case category option details by params.
    *
    * @param array $params
-   *   Catetgory params.
+   *   The Case Type category params.
+   * @param string $property
+   *   (Optional) Case Type category property. If set then this category
+   *   property would be returned, full category data array otherwise.
    *
-   * @return array
-   *   Category details.
+   * @return mixed
+   *   The Case Type category array, or it's property value.
    */
-  private function getCaseCategoryOptionDetailsByParams(array $params) {
-    $apiParams = ['sequential' => 1, 'option_group_id' => 'case_type_categories'];
-    $apiParams = array_merge($apiParams, $params);
-    $result = civicrm_api3('OptionValue', 'get', $apiParams);
-
-    return !empty($result['values'][0]) ? $result['values'][0] : [];
+  private function getCaseCategoryOptionDetailsByParams(array $params, $property = '') {
+    return CaseCategoryHelper::getCategoryByParams($params, $property);
   }
 
 }
