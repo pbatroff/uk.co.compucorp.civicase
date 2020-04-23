@@ -12,8 +12,10 @@ class CRM_Civicase_Service_CaseCategoryMenu {
    *
    * @param string $caseTypeCategoryName
    *   Case Type category name.
+   * @param int $caseTypeCategoryId
+   *   Case Type category id.
    */
-  public function createItems($caseTypeCategoryName) {
+  public function createItems($caseTypeCategoryName, $caseTypeCategoryId) {
     $result = civicrm_api3('Navigation', 'get', ['name' => $caseTypeCategoryName]);
 
     if ($result['count'] > 0) {
@@ -46,7 +48,7 @@ class CRM_Civicase_Service_CaseCategoryMenu {
       'id' => $caseCategoryMenu['id'],
       'weight' => $casesWeight + 1,
     ]);
-    $this->createCaseCategorySubmenus($caseTypeCategoryName, $permissions, $caseCategoryMenu['id']);
+    $this->createCaseCategorySubmenus($caseTypeCategoryName, $caseTypeCategoryId, $permissions, $caseCategoryMenu['id']);
   }
 
   /**
@@ -54,17 +56,19 @@ class CRM_Civicase_Service_CaseCategoryMenu {
    *
    * @param string $caseTypeCategoryName
    *   Case category name.
+   * @param int $caseTypeCategoryId
+   *   Case category id.
    * @param array $permissions
    *   Permissions.
    * @param int $caseCategoryMenuId
    *   Menu ID.
    */
-  private function createCaseCategorySubmenus($caseTypeCategoryName, array $permissions, $caseCategoryMenuId) {
+  private function createCaseCategorySubmenus($caseTypeCategoryName, $caseTypeCategoryId, array $permissions, $caseCategoryMenuId) {
     $submenus = [
       [
         'label' => ts('Dashboard'),
         'name' => "{$caseTypeCategoryName}_dashboard",
-        'url' => "civicrm/case/a/?case_type_category={$caseTypeCategoryName}#/case?case_type_category={$caseTypeCategoryName}",
+        'url' => "civicrm/case/a/?ctc={$caseTypeCategoryId}#/case?ctc={$caseTypeCategoryId}",
         'permission' => "{$permissions['ACCESS_MY_CASE_CATEGORY_AND_ACTIVITIES']['name']},{$permissions['ACCESS_CASE_CATEGORY_AND_ACTIVITIES']['name']}",
         'permission_operator' => 'OR',
         'has_separator' => 1,
@@ -72,29 +76,28 @@ class CRM_Civicase_Service_CaseCategoryMenu {
       [
         'label' => ts("New {$caseTypeCategoryName}"),
         'name' => "new_{$caseTypeCategoryName}",
-        'url' => "civicrm/case/add?case_type_category={$caseTypeCategoryName}&action=add&reset=1&context=standalone",
+        'url' => "civicrm/case/add?ctc={$caseTypeCategoryId}&action=add&reset=1&context=standalone",
         'permission' => "{$permissions['ADD_CASE_CATEGORY']['name']},{$permissions['ACCESS_CASE_CATEGORY_AND_ACTIVITIES']['name']}",
         'permission_operator' => 'OR',
       ],
       [
         'label' => ts("My {$caseTypeCategoryName}"),
         'name' => "my_{$caseTypeCategoryName}",
-        'url' => '/civicrm/case/a/?case_type_category=' . $caseTypeCategoryName . '#/case/list?cf={"case_type_category":"' . $caseTypeCategoryName . '","case_manager":"user_contact_id"}',
+        'url' => '/civicrm/case/a/?ctc=' . $caseTypeCategoryId . '#/case/list?cf={"ctc":"' . $caseTypeCategoryId . '","case_manager":"user_contact_id"}',
         'permission' => "{$permissions['ACCESS_MY_CASE_CATEGORY_AND_ACTIVITIES']['name']},{$permissions['ACCESS_CASE_CATEGORY_AND_ACTIVITIES']['name']}",
         'permission_operator' => 'OR',
       ],
       [
         'label' => ts("My {$caseTypeCategoryName} activities"),
         'name' => "my_activities_{$caseTypeCategoryName}",
-        'url' => '/civicrm/case/a/?case_type_category=' . $caseTypeCategoryName . '#/case?case_type_category=' . $caseTypeCategoryName . '&dtab=1&af={"case_filter":{"case_type_id.is_active":1,"contact_is_deleted":0,"case_type_id.case_type_category":"' . $caseTypeCategoryName . '"},
-        "@involvingContact":"myActivities"}&drel=all',
+        'url' => '/civicrm/case/a/?ctc=' . $caseTypeCategoryId . '#/case?ctc=' . $caseTypeCategoryId . '&dtab=1&af={"case_filter":{"case_type_id.is_active":1,"contact_is_deleted":0,"case_type_id.case_type_category":"' . $caseTypeCategoryId . '"},"@involvingContact":"myActivities"}&drel=all',
         'permission' => 'access CiviCRM',
         'has_separator' => 1,
       ],
       [
         'label' => ts("All {$caseTypeCategoryName}"),
         'name' => "all_{$caseTypeCategoryName}",
-        'url' => 'civicrm/case/a/?case_type_category=' . $caseTypeCategoryName . '#/case/list?cf={"case_type_category":"' . $caseTypeCategoryName . '"}',
+        'url' => 'civicrm/case/a/?ctc=' . $caseTypeCategoryId . '#/case/list?cf={"ctc":"' . $caseTypeCategoryId . '"}',
         'permission' => "{$permissions['ACCESS_MY_CASE_CATEGORY_AND_ACTIVITIES']['name']},{$permissions['ACCESS_CASE_CATEGORY_AND_ACTIVITIES']['name']}",
         'permission_operator' => 'OR',
       ],

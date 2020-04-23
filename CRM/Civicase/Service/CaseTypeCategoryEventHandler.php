@@ -57,9 +57,18 @@ class CRM_Civicase_Service_CaseTypeCategoryEventHandler {
       return;
     }
 
-    $this->menu->createItems($caseCategoryName);
-    $this->customFieldExtends->create($caseCategoryName, "Case ({$caseCategoryName})");
-    $this->customData->create($caseCategoryName);
+    try {
+      $category = civicrm_api3('OptionValue', 'getsingle', [
+        'option_group_id' => 'case_type_categories',
+        'name' => $caseCategoryName,
+      ]);
+
+      $this->menu->createItems($caseCategoryName, $category['id']);
+      $this->customFieldExtends->create($caseCategoryName, "Case ({$caseCategoryName})");
+      $this->customData->create($caseCategoryName);
+    }
+    catch (Exception $e) {
+    }
   }
 
   /**
