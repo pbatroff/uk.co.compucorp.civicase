@@ -94,7 +94,7 @@ class CRM_Civicase_Hook_BuildForm_CaseCategoryCustomFieldsProcessing {
     $urlParams = parse_url(htmlspecialchars_decode($form->controller->_entryURL), PHP_URL_QUERY);
     parse_str($urlParams, $urlParams);
 
-    return !empty($urlParams['case_type_category']) ? $urlParams['case_type_category'] : 'cases';
+    return !empty($urlParams['ctc']) ? $urlParams['ctc'] : 'cases';
   }
 
 }

@@ -185,7 +185,7 @@ class CRM_Civicase_Hook_PermissionCheck_CaseCategory {
    *   Category URL.
    */
   private function getCaseCategoryFromUrl() {
-    $caseCategory = CRM_Utils_Request::retrieve('case_type_category', 'String');
+    $caseCategory = CRM_Utils_Request::retrieve('ctc', 'String');
     if ($caseCategory) {
       if (is_numeric($caseCategory)) {
         $caseTypeCategories = CaseType::buildOptions('case_type_category', 'validate');
@@ -201,8 +201,8 @@ class CRM_Civicase_Hook_PermissionCheck_CaseCategory {
     $urlParams = parse_url(htmlspecialchars_decode($entryURL), PHP_URL_QUERY);
     parse_str($urlParams, $urlParams);
 
-    if (!empty($urlParams['case_type_category'])) {
-      return $urlParams['case_type_category'];
+    if (!empty($urlParams['ctc'])) {
+      return $urlParams['ctc'];
     }
 
     return NULL;

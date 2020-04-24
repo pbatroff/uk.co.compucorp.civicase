@@ -64,7 +64,7 @@ class CRM_Civicase_Hook_Tabset_CaseCategoryTabAdd {
         'id' => $caseCategory['name'],
         'url' => CRM_Utils_System::url('civicrm/case/contact-case-tab', [
           'cid' => $contactID,
-          'case_type_category' => $caseCategory['value'],
+          'ctc' => $caseCategory['value'],
         ]),
         'title' => ts($caseCategory['label']),
         'weight' => $caseTabWeight,

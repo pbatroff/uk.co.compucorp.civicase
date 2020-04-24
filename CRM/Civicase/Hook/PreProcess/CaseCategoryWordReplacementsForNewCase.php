@@ -63,7 +63,7 @@ class CRM_Civicase_Hook_PreProcess_CaseCategoryWordReplacementsForNewCase {
     $urlParams = parse_url(htmlspecialchars_decode($form->controller->_entryURL), PHP_URL_QUERY);
     parse_str($urlParams, $urlParams);
 
-    return !empty($urlParams['case_type_category']) ? $urlParams['case_type_category'] : CRM_Civicase_Helper_CaseCategory::CASE_TYPE_CATEGORY_NAME;
+    return !empty($urlParams['ctc']) ? $urlParams['ctc'] : CRM_Civicase_Helper_CaseCategory::CASE_TYPE_CATEGORY_NAME;
   }
 
   /**
