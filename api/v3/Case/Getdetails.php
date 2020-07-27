@@ -103,6 +103,10 @@ function civicrm_api3_case_getdetails(array $params) {
       $params['contact_involved'],
       $params['has_activities_for_involved_contact']
     );
+
+    if (!$params['options']['is_count']) {
+      $sql->groupBy('a.id');
+    }
   }
 
   if (!empty($params['exclude_for_client_id'])) {
@@ -270,6 +274,7 @@ function civicrm_api3_case_getdetails(array $params) {
       $result['values'] = array_values($result['values']);
     }
   }
+
   return $resultMetadata + $result;
 }
 
@@ -350,6 +355,12 @@ function calculate_activities_for_category($category, array $ids, $statusTypeIds
   }
 }
 
+class MyMy extends CRM_Utils_SQL_Select {
+  public function clearSelect() {
+    $this->select = [];
+  }
+}
+
 /**
  * Support extra sorting in case.getdetails.
  *
@@ -362,7 +373,7 @@ function calculate_activities_for_category($category, array $ids, $statusTypeIds
  * @throws \API_Exception
  */
 function _civicrm_api3_case_getdetails_extrasort(array &$params) {
-  $sql = CRM_Utils_SQL_Select::fragment();
+  $sql = new MyMy(NULL);
   $options = _civicrm_api3_get_options_from_params($params);
 
   if (!empty($options['sort'])) {
