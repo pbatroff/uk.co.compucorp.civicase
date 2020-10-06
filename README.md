@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/compucorp/uk.co.compucorp.civicase/workflows/Tests/badge.svg)](https://github.com/compucorp/uk.co.compucorp.civicase/workflows/Tests/badge.svg)
+[![Build Status](https://github.com/compucorp/uk.co.compucorp.civicase/workflows/ScheduledTests/badge.svg)](https://github.com/compucorp/uk.co.compucorp.civicase/workflows/ScheduledTests/badge.svg)
 
 # CiviCase ReadMe
 
