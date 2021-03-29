@@ -422,6 +422,14 @@ function civicase_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = []
  * Implements hook_civicrm_pageRun().
  */
 function civicase_civicrm_pageRun(&$page) {
+  // ------
+  CRM_Core_Resources::singleton()
+    ->addScriptFile('uk.co.compucorp.civicase', 'packages/moment.min.js');
+
+  $loader = new AngularLoader();
+  $loader->setModules(['civicase']);
+  $loader->load();
+  // -----
   $hooks = [
     new CRM_Civicase_Hook_PageRun_ViewCasePageRedirect(),
     new CRM_Civicase_Hook_PageRun_AddCaseAngularPageResources(),

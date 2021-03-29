@@ -13,7 +13,8 @@
         canSelectCaseTypeCategory: '=',
         caseTypeId: '=',
         refreshCase: '=?refreshCallback',
-        hideQuickNavWhenDetailsIsVisible: '='
+        hideQuickNavWhenDetailsIsVisible: '=',
+        displayOptions: '<'
       }
     };
 
@@ -99,8 +100,9 @@
       : [];
 
     (function init () {
+      $scope.displayOptions = {};
       applyFiltersFromBindings();
-      bindRouteParamsToScope();
+      // bindRouteParamsToScope();
       initiateWatchersAndEvents();
     }());
 
