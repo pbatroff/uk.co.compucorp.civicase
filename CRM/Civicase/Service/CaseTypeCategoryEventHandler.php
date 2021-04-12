@@ -51,15 +51,19 @@ class CRM_Civicase_Service_CaseTypeCategoryEventHandler {
    * @param string $caseCategoryName
    *   Case type category name.
    */
-  public function onCreate(CaseCategoryInstance $caseCategoryInstance, $caseCategoryName) {
-    if (!$caseCategoryName) {
+  public function onCreate(CaseCategoryInstance $caseCategoryInstance, $caseTypeCategory) {
+    if (empty($caseTypeCategory['label'])) {
       return;
     }
 
     $menu = $caseCategoryInstance->getMenuObject();
-    $menu->createItems($caseCategoryName);
-    $this->customFieldExtends->create($caseCategoryName, "Case ({$caseCategoryName})", $caseCategoryInstance->getCustomGroupEntityTypesFunction());
-    $this->customData->create($caseCategoryName);
+    $menu->createItems($caseTypeCategory);
+    $this->customFieldExtends->create(
+      $caseCategory['label'],
+      "Case ({$caseCategory['label']})",
+      $caseCategoryInstance->getCustomGroupEntityTypesFunction()
+    );
+    $this->customData->create($caseCategory['label']);
   }
 
   /**
@@ -103,14 +107,14 @@ class CRM_Civicase_Service_CaseTypeCategoryEventHandler {
    * @param string $caseCategoryName
    *   Case type category name.
    */
-  public function onDelete(CaseCategoryInstance $caseCategoryInstance, $caseCategoryName) {
-    if (!$caseCategoryName) {
+  public function onDelete(CaseCategoryInstance $caseCategoryInstance, $caseTypeCategory) {
+    if (!isset($caseTypeCategory['name'])) {
       return;
     }
     $menu = $caseCategoryInstance->getMenuObject();
-    $menu->deleteItems($caseCategoryName);
-    $this->customFieldExtends->delete($caseCategoryName);
-    $this->customData->delete($caseCategoryName);
+    $menu->deleteItems($caseTypeCategory['name']);
+    $this->customFieldExtends->delete($caseTypeCategory['name']);
+    $this->customData->delete($caseTypeCategory['name']);
     $this->deleteCategoryInstanceRelationship($caseCategoryInstance);
   }
 

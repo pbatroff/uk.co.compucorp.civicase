@@ -15,8 +15,8 @@ class CRM_Civicase_Service_CaseCategoryCustomDataType {
    * @param string $caseCategoryName
    *   Case Category Name.
    */
-  public function create($caseCategoryName) {
-    $result = $this->getCustomDataOptionValue($caseCategoryName);
+  public function create($caseTypeCategory) {
+    $result = $this->getCustomDataOptionValue($caseTypeCategory['name']);
 
     if ($result['count'] > 0) {
       return;
@@ -27,9 +27,9 @@ class CRM_Civicase_Service_CaseCategoryCustomDataType {
     try {
       civicrm_api3('OptionValue', 'create', [
         'option_group_id' => 'custom_data_type',
-        'name' => $caseCategoryName,
-        'label' => $caseCategoryName,
-        'value' => $caseCategoryOptions[$caseCategoryName],
+        'name' => $caseTypeCategory['name'],
+        'label' => $caseTypeCategory['label'],
+        'value' => $caseCategoryOptions[$caseTypeCategory['name']],
         'description' => NULL,
         'is_active' => TRUE,
         'is_reserved' => TRUE,
@@ -47,8 +47,8 @@ class CRM_Civicase_Service_CaseCategoryCustomDataType {
    * @param string $caseCategoryName
    *   Case Category Name.
    */
-  public function delete($caseCategoryName) {
-    $result = $this->getCustomDataOptionValue($caseCategoryName);
+  public function delete($caseTypeCategory) {
+    $result = $this->getCustomDataOptionValue($caseTypeCategory['name']);
 
     if ($result['count'] == 0) {
       return;

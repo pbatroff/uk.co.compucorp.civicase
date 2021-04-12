@@ -18,8 +18,21 @@ class CRM_Civicase_Hook_BuildForm_AddCaseCategoryInstanceField extends CRM_Civic
       return;
     }
 
-    $this->addCategoryInstanceFormField($form);
+    $singular = $form->add(
+      'text',
+      'case_category_singular_label',
+      ts('Singular Label')
+    );
+
+    $caseCategoryInstance = $this->addCategoryInstanceFormField($form);
     $this->addCategoryInstanceTemplate();
+
+    if ($form->getVar('_id')) {
+      $caseCategoryValues = $form->getVar('_values');
+      $defaults = $this->getDefaultValue($caseCategoryValues['value']);
+      $caseCategoryInstance->setValue($defaults['instance_id']);
+      $singular->setValue($defaults['singular_label']);
+    }
   }
 
   /**
@@ -29,7 +42,7 @@ class CRM_Civicase_Hook_BuildForm_AddCaseCategoryInstanceField extends CRM_Civic
    *   Form Class object.
    */
   private function addCategoryInstanceFormField(CRM_Core_Form $form) {
-    $caseCategoryInstance = $form->add(
+    return $form->add(
       'select',
       self::INSTANCE_TYPE_FIELD_NAME,
       ts('Instance Type'),
@@ -37,12 +50,6 @@ class CRM_Civicase_Hook_BuildForm_AddCaseCategoryInstanceField extends CRM_Civic
       TRUE,
       ['placeholder' => TRUE]
     );
-
-    if ($form->getVar('_id')) {
-      $caseCategoryValues = $form->getVar('_values');
-      $defaultInstanceValue = $this->getDefaultValue($caseCategoryValues['value']);
-      $caseCategoryInstance->setValue($defaultInstanceValue);
-    }
   }
 
   /**
@@ -76,7 +83,7 @@ class CRM_Civicase_Hook_BuildForm_AddCaseCategoryInstanceField extends CRM_Civic
       return NULL;
     }
 
-    return $result['values'][0]['instance_id'];
+    return $result['values'][0];
   }
 
 }

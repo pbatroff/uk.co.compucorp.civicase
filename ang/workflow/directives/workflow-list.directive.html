@@ -1,11 +1,11 @@
 <div id="bootstrap-theme">
-  <h1 crm-page-title>{{:: ts('Manage Workflows') }}</h1>
+  <h1 crm-page-title>{{:: ts('Manage %1 types', { 1: currentCaseCategory.singular_label }) }}</h1>
 
   <a
     ng-click="redirectToWorkflowCreationScreen()"
     class="btn btn-primary civicase-workflow-list__new-button">
     <i class="material-icons">add_circle</i>
-    New Workflow
+   {{:: ts('New %1 type', { 1: currentCaseCategory.singular_label }) }}
   </a>
 
   <div class="panel panel-default civicase-workflow-list__filters" ng-if="filters.length > 0">
@@ -27,7 +27,7 @@
   <div class="panel panel-default" ng-if="workflows.length === 0 && !isLoading">
     <div class="panel-body">
       <div class="text-center">
-        {{:: ts('No workflows are available.') }}
+        {{:: ts('No %1 types are available.', { 1: currentCaseCategory.singular_label }) }}
       </div>
     </div>
   </div>

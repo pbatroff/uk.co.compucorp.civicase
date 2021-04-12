@@ -25,12 +25,14 @@
    */
   function workflowListController ($scope, ts, WorkflowListColumns,
     WorkflowListActionItems, CaseTypeCategory, WorkflowListFilters,
-    getServiceForInstance) {
+    getServiceForInstance, currentCaseCategory) {
     $scope.ts = ts;
     $scope.isLoading = false;
     $scope.workflows = [];
     $scope.pageObj = { total: 0, size: 25, num: 1 };
     $scope.totalCount = 0;
+    $scope.currentCaseCategory = CaseTypeCategory.findByName(currentCaseCategory);
+    $scope.currentCaseCategory.singular_label = _.first($scope.currentCaseCategory['api.CaseCategoryInstance.get'].values).singular_label;
     $scope.actionItems = filterArrayForCurrentInstance(WorkflowListActionItems);
     $scope.tableColumns = filterArrayForCurrentInstance(WorkflowListColumns);
     $scope.filters = filterArrayForCurrentInstance(WorkflowListFilters);

@@ -36,6 +36,13 @@
       <optionGroupName>case_category_instance_type</optionGroupName>
     </pseudoconstant>
   </field>
+  <field>
+    <name>singular_label</name>
+    <type>varchar</type>
+    <length>255</length>
+    <comment>A singular noun for the case category instance</comment>
+    <required>true</required>
+  </field>
   <index>
     <name>unique_category</name>
     <fieldName>category_id</fieldName>
