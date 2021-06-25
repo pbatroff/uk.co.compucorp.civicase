@@ -31,11 +31,21 @@ class CRM_Civicase_Upgrader_Steps_Step0016 {
       'option_group_id' => 'case_type_categories',
     ]);
 
+    print('<pre>' . print_r('$caseTypeCategories', TRUE) . '</pre>');
+    print('<pre>' . print_r($caseTypeCategories, TRUE) . '</pre>');
+    print('<pre>' . print_r('-------------------', TRUE) . '</pre>');
+
     foreach ($caseTypeCategories['values'] as $caseTypeCategory) {
       $isLabelLastCharacterS = substr(strtolower($caseTypeCategory['label']), -1) === 's';
       $singularLabel = $isLabelLastCharacterS
         ? substr($caseTypeCategory['label'], 0, -1)
         : $caseTypeCategory['label'];
+
+
+      print('<pre>' . print_r('$singularLabel', TRUE) . '</pre>');
+      print('<pre>' . print_r($singularLabel, TRUE) . '</pre>');
+      print('<pre>' . print_r('-------------------', TRUE) . '</pre>');
+
 
       $caseCategoryCustomFields->save($caseTypeCategory['value'], [
         'singular_label' => $singularLabel,
