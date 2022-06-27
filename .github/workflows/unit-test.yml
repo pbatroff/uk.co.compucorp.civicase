@@ -22,8 +22,9 @@ jobs:
 
     steps:
       - name: Config mysql database as per CiviCRM requirement
-        run: echo "ALTER USER root@localhost identified with mysql_native_password by 'root';" | mysql -u root --password=root --host=mysql
-        run: echo "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));" | mysql -u root --password=root --host=mysql
+        run: |
+          echo "ALTER USER root@localhost identified with mysql_native_password by 'root';" | mysql -u root --password=root --host=mysql
+          echo "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));" | mysql -u root --password=root --host=mysql
 
       - name: Config amp
         run : amp config:set --mysql_dsn=mysql://root:root@mysql:3306
