@@ -341,7 +341,7 @@ class CRM_Civicase_Helper_CaseCategory {
       return new CaseManagementUtils();
     }
 
-    $instanceClasses = CRM_Core_OptionGroup::values('case_category_instance_type', FALSE, FALSE, TRUE, NULL, 'grouping');
+    $instanceClasses = CRM_Core_OptionGroup::values('case_category_instance_type', TRUE, TRUE, TRUE, NULL);
     $instanceClass = $instanceClasses[$instanceValue];
 
     return new $instanceClass($caseCategoryInstance->id);
