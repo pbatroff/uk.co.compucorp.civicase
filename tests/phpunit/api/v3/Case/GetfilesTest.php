@@ -30,7 +30,7 @@ class api_v3_Case_GetfilesTest extends api_v3_Case_BaseTestCase implements Headl
 
   public function setUp() {
     parent::setUp();
-    CRM_Core_DAO::executeQuery('UPDATE civicrm_option_value SET grouping = "milestone" WHERE option_group_id = 2 AND name = "Medical evaluation"');
+    CRM_Core_DAO::executeQuery('UPDATE civicrm_option_value SET `grouping` = "milestone" WHERE option_group_id = 2 AND `name` = "Medical evaluation"');
     $this->cleanupFiles();
   }
 
