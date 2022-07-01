@@ -1,8 +1,10 @@
 <?php
 
+use Civi\Test;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
+use CRM_Civicase_Test_Fabricator_Contact as ContactFabricator;
 
 require_once 'BaseTestCase.php';
 
@@ -10,46 +12,80 @@ require_once 'BaseTestCase.php';
  * Test the "Case.getfiles" API.
  *
  * Tips:
- *  - With HookInterface, you may implement CiviCRM hooks directly in the test class.
- *    Simply create corresponding functions (e.g. "hook_civicrm_post(...)" or similar).
- *  - With TransactionalInterface, any data changes made by setUp() or test****() functions will
- *    rollback automatically -- as long as you don't manipulate schema or truncate tables.
- *    If this test needs to manipulate schema or truncate tables, then either:
+ *  - With HookInterface, you may implement CiviCRM hooks directly
+ *    in the test class.
+ *    Simply create corresponding functions
+ *     (e.g. "hook_civicrm_post(...)" or similar).
+ *  - With TransactionalInterface, any data changes made by setUp()
+ *    or test****() functions will
+ *    rollback automatically -- as long as you don't manipulate schema
+ *    or truncate tables.
+ *    If this test needs to manipulate schema or truncate tables,
+ *    then either:
  *       a. Do all that using setupHeadless() and Civi\Test.
- *       b. Disable TransactionalInterface, and handle all setup/teardown yourself.
+ *       b. Disable TransactionalInterface,
+ *          and handle all setup/teardown yourself.
  *
  * @group headless
  */
 class api_v3_Case_GetfilesTest extends api_v3_Case_BaseTestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
 
+  /**
+   * Holds logged in case creator id.
+   *
+   * @var int
+   */
+  private $creator;
+
+  /**
+   * Holds logged in case client id.
+   *
+   * @var int
+   */
+  private $client;
+
+  /**
+   * Setup headless test.
+   */
   public function setUpHeadless() {
-    // Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
+    // Civi\Test has many helpers, like install(),
+    // uninstall(), sql(), and sqlFile().
     // See: https://github.com/civicrm/org.civicrm.testapalooza/blob/master/civi-test.md
-    return \Civi\Test::headless()->installMe(__DIR__)->apply();
+    return Test::headless()->installMe(__DIR__)->apply();
   }
 
+  /**
+   * Setup data before tests run.
+   */
   public function setUp() {
     parent::setUp();
+    $this->creator = ContactFabricator::fabricate();
+    $this->client = ContactFabricator::fabricate();
     CRM_Core_DAO::executeQuery('UPDATE civicrm_option_value SET `grouping` = "milestone" WHERE option_group_id = 2 AND `name` = "Medical evaluation"');
     $this->cleanupFiles();
   }
 
+  /**
+   * Cleanup test files.
+   */
   public function tearDown() {
     parent::tearDown();
     $this->cleanupFiles();
   }
 
+  /**
+   * Provide data for testing get files.
+   */
   public function getExamples() {
     $cases = array();
 
     // $cases[] = array(
-    //   0 => 'actSubject',
-    //   1 => 'actDetails',
-    //   2 => 'fileName',
-    //   3 => 'searchText',
-    //   4 => expectMatch,
+    // 0 => 'actSubject',
+    // 1 => 'actDetails',
+    // 2 => 'fileName',
+    // 3 => 'searchText',
+    // 4 => expectMatch,
     // );
-
     $cases[0] = array(
       // Match any file if there's no filter.
       0 => 'Give bread a chance',
@@ -192,7 +228,7 @@ class api_v3_Case_GetfilesTest extends api_v3_Case_BaseTestCase implements Headl
    * Create an activity with an attachment. Run a search. See if it matches.
    *
    * @param string $actSubject
-   *   Set the activity's subject
+   *   Set the activity's subject.
    * @param string $actDetails
    *   Set the activity's details.
    * @param string $fileName
@@ -202,18 +238,19 @@ class api_v3_Case_GetfilesTest extends api_v3_Case_BaseTestCase implements Headl
    *   Ex: array('text' => 'hello').
    * @param bool $expectMatch
    *   Whether the $searchText matches the activity.
+   *
    * @dataProvider getExamples
    */
-  public function testSearch($actSubject, $actDetails, $fileName, $searchParams, $expectMatch) {
+  public function testSearch($actSubject, $actDetails, $fileName, array $searchParams, $expectMatch) {
     $cases[0] = $this->callAPISuccess('Case', 'create', array(
-      'contact_id' => 1,
-      'creator_id' => 1,
+      'contact_id' => $this->client['id'],
+      'creator_id' => $this->creator['id'],
       'case_type_id' => 'housing_support',
       'subject' => 'Hello world',
     ));
     $cases[1] = $this->callAPISuccess('Case', 'create', array(
-      'contact_id' => 2,
-      'creator_id' => 2,
+      'contact_id' => $this->client['id'],
+      'creator_id' => $this->creator['id'],
       'case_type_id' => 'housing_support',
       'subject' => 'Hello world',
     ));
@@ -256,7 +293,7 @@ class api_v3_Case_GetfilesTest extends api_v3_Case_BaseTestCase implements Headl
    * Create an activity with an attachment. Run a search. See if it matches.
    *
    * @param string $actSubject
-   *   Set the activity's subject
+   *   Set the activity's subject.
    * @param string $actDetails
    *   Set the activity's details.
    * @param string $fileName
@@ -266,18 +303,19 @@ class api_v3_Case_GetfilesTest extends api_v3_Case_BaseTestCase implements Headl
    *   Ex: array('text' => 'hello').
    * @param bool $expectMatch
    *   Whether the $searchText matches the activity.
+   *
    * @dataProvider getExamples
    */
-  public function testReviseThenAttachThenSearch($actSubject, $actDetails, $fileName, $searchParams, $expectMatch) {
+  public function testReviseThenAttachThenSearch($actSubject, $actDetails, $fileName, array $searchParams, $expectMatch) {
     $cases[0] = $this->callAPISuccess('Case', 'create', array(
-      'contact_id' => 1,
-      'creator_id' => 1,
+      'contact_id' => $this->client['id'],
+      'creator_id' => $this->creator['id'],
       'case_type_id' => 'housing_support',
       'subject' => 'Hello world',
     ));
     $cases[1] = $this->callAPISuccess('Case', 'create', array(
-      'contact_id' => 2,
-      'creator_id' => 2,
+      'contact_id' => $this->client['id'],
+      'creator_id' => $this->creator['id'],
       'case_type_id' => 'housing_support',
       'subject' => 'Hello world',
     ));
@@ -320,7 +358,7 @@ class api_v3_Case_GetfilesTest extends api_v3_Case_BaseTestCase implements Headl
    * Create an activity with an attachment. Run a search. See if it matches.
    *
    * @param string $actSubject
-   *   Set the activity's subject
+   *   Set the activity's subject.
    * @param string $actDetails
    *   Set the activity's details.
    * @param string $fileName
@@ -330,18 +368,19 @@ class api_v3_Case_GetfilesTest extends api_v3_Case_BaseTestCase implements Headl
    *   Ex: array('text' => 'hello').
    * @param bool $expectMatch
    *   Whether the $searchText matches the activity.
+   *
    * @dataProvider getExamples
    */
-  public function testAttachThenReviseThenSearch($actSubject, $actDetails, $fileName, $searchParams, $expectMatch) {
+  public function testAttachThenReviseThenSearch($actSubject, $actDetails, $fileName, array $searchParams, $expectMatch) {
     $cases[0] = $this->callAPISuccess('Case', 'create', array(
-      'contact_id' => 1,
-      'creator_id' => 1,
+      'contact_id' => $this->client['id'],
+      'creator_id' => $this->creator['id'],
       'case_type_id' => 'housing_support',
       'subject' => 'Hello world',
     ));
     $cases[1] = $this->callAPISuccess('Case', 'create', array(
-      'contact_id' => 2,
-      'creator_id' => 2,
+      'contact_id' => $this->client['id'],
+      'creator_id' => $this->creator['id'],
       'case_type_id' => 'housing_support',
       'subject' => 'Hello world',
     ));
@@ -385,8 +424,8 @@ class api_v3_Case_GetfilesTest extends api_v3_Case_BaseTestCase implements Headl
    */
   public function testXref() {
     $cases[0] = $this->callAPISuccess('Case', 'create', array(
-      'contact_id' => 1,
-      'creator_id' => 1,
+      'contact_id' => $this->client['id'],
+      'creator_id' => $this->creator['id'],
       'case_type_id' => 'housing_support',
       'subject' => 'Hello world',
     ));
@@ -426,6 +465,9 @@ class api_v3_Case_GetfilesTest extends api_v3_Case_BaseTestCase implements Headl
     $this->assertEquals('Hello world', $getfiles['xref']['case'][$cases[0]['id']]['subject']);
   }
 
+  /**
+   * Test getting of empty files will fail.
+   */
   public function testEmpty() {
     $this->callAPIFailure('Case', 'getfiles', array());
   }
