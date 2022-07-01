@@ -64,7 +64,7 @@ class CRM_Civicase_Upgrader extends CRM_Civicase_Upgrader_Base {
         'return' => 'id',
         'option_group_id' => 'activity_type',
         'name' => ['IN' => $activityTypes],
-        'api.OptionValue.setvalue' => [
+        'api.OptionValue.create' => [
           'option_group_id' => 'activity_type',
           'grouping' => $grouping,
         ],
